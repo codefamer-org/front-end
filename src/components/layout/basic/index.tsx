@@ -37,6 +37,11 @@ const topMenus: MenuItem[] = [
       },
     ]
   },
+  {
+    label: '文章管理',
+    key: '/home/article/list',
+    icon: <MailOutlined />,
+  },
 ]
 
 const BasicLayout: React.FC = () => {

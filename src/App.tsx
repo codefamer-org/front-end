@@ -8,8 +8,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BasicLayout from './components/layout/basic/index';
 import Login from './views/login/index';
 
+// 战鼓管理
 import User from '@/views/system/user/index';
+// 菜单管理
 import Menu from '@/views/system/menu/index';
+// 文章管理
+import ArticleList from '@/views/article/list/index';
+import ArticleUpsert from '@/views/article/upsert/index';
+
 import Test from '@/views/test/test.jsx';
 
 
@@ -38,6 +44,8 @@ function App() {
             <Route path="/home/system/user" element={<User />} />
             <Route path="/home/system/menu" element={<Menu />} />
             <Route path="/home/test" element={<Test />} />
+            <Route path="/home/article/list" element={<ArticleList />} />
+            <Route path="/home/article/upsert" element={<ArticleUpsert />} />
           </Route>
         </Routes>
       </BrowserRouter>

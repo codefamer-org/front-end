@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space } from 'antd';
+import { Table, Space, Button } from 'antd';
 import type { GetProp, TableProps } from 'antd';
-import { getUserPage } from '@/api/user';
+import { getArticlePage } from '@/api/article';
+import { useNavigate } from 'react-router-dom';
 
-type ColumnsType<T> = TableProps<T>['columns'];
+// type ColumnsType<T> = TableProps<T>['columns'];
 type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
 
 interface DataType {
@@ -25,44 +26,37 @@ interface TableParams {
   sortOrder?: string;
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
+
 const columns = [
   {
-    title: '用户名',
-    dataIndex: 'name',
-    key: 'name',
+    title: '标题',
+    dataIndex: 'title',
+    key: 'title',
     fixed: 'left',
-    width: 100,
-    render: (name : string) => `${name}`,
-  },
-  {
-    title: '手机号',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: 120,
-  },
-  {
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
-    filters: [
-      { text: '保密', value: 0 },
-      { text: '男', value: 1 },
-      { text: '女', value: 2 },
-    ],
-    width: 100,
-  },
-  {
-    title: '邮箱',
-    dataIndex: 'email',
-    key: 'email',
-    ellipsis: true,
     width: 160,
+    render: (title : string) => `${title}`,
+    ellipsis: true,
   },
   {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
-    width: 100,
+    title: '描述',
+    dataIndex: 'desc',
+    key: 'desc',
+    width: 160,
+    ellipsis: true,
+  },
+  {
+    title: 'MD内容',
+    dataIndex: 'markdown',
+    key: 'markdown',
+    width: 160,
+    ellipsis: true,
+  },
+  {
+    title: 'HTML内容',
+    dataIndex: 'html',
+    key: 'html',
+    width: 160,
+    ellipsis: true,
   },
   {
     title: '创建时间',
@@ -101,6 +95,9 @@ const columns = [
   },
 ];
 
+
+
+
 const getRandomuserParams = (params: TableParams) => ({
   limit: params.pagination?.pageSize,
   offset: params.pagination?.current,
@@ -109,6 +106,7 @@ const getRandomuserParams = (params: TableParams) => ({
 
 
 const TableList: React.FC = () => {
+  const navigate = useNavigate()
 
   const [data, setData] = useState<DataType[]>();
   const [loading, setLoading] = useState(false);
@@ -120,29 +118,25 @@ const TableList: React.FC = () => {
   });
   const fetchData = () => {
     setLoading(true);
-    getUserPage({
+    getArticlePage({
       ...getRandomuserParams(tableParams),
     })
-      .then(({ data: results }) => {
-        const temp = results
-        console.log('SADASD',temp );
-
-        for (let index = 0; index < 500; index++) {
-          temp?.push({ ...results[index], 'user_id': `${index}_user_id` })
-        }
-        setData(temp);
+      .then(({ data: { rows, count } }) => {
+        setData(rows);
         setLoading(false);
         setTableParams({
           ...tableParams,
           pagination: {
             ...tableParams.pagination,
-            total: 200,
-            // 200 is mock data, you should read it from server
-            // total: data.totalCount,
+            total: count,
           },
         });
       });
   };
+
+  const createArticleHandle = () => {
+    navigate('/home/article/upsert')
+  }
 
   useEffect(() => {
     fetchData();
@@ -163,22 +157,30 @@ const TableList: React.FC = () => {
 
 
   return (
-    <Table
-      bordered
-      size="middle"
-      sticky
-      virtual
-      dataSource={data}
-      columns={columns}
-      rowKey={(record: DataType) => record.user_id}
-      pagination={false}
-      loading={loading}
-      onChange={handleTableChange}
-      scroll={{ y: 600 }}
-      style={{
-        flex: 1
-      }}
-    />
+    <>
+      <div style={{
+        marginBottom: 12
+        }}>
+        <Button type="primary" onClick={createArticleHandle}>
+          添加文章
+        </Button>
+      </div>
+      <Table
+        bordered
+        size="middle"
+        sticky
+        virtual
+        dataSource={data}
+        columns={columns}
+        rowKey={(record: DataType) => record.user_id}
+        pagination={false}
+        onChange={handleTableChange}
+        scroll={{ y: 600 }}
+        style={{
+          flex: 1
+        }}
+      />
+    </>
   )
 }
 export default TableList;
