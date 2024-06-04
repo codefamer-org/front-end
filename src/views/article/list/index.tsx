@@ -5,10 +5,13 @@ import { getArticlePage } from '@/api/article';
 import { useNavigate } from 'react-router-dom';
 
 // type ColumnsType<T> = TableProps<T>['columns'];
-type TablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>;
+type TablePaginationConfig = Exclude<
+  GetProp<TableProps, 'pagination'>,
+  boolean
+>;
 
 interface DataType {
-  [prop: string]: string
+  [prop: string]: string;
   // name: {
   //   first: string;
   //   last: string;
@@ -34,7 +37,7 @@ const columns = [
     key: 'title',
     fixed: 'left',
     width: 160,
-    render: (title : string) => `${title}`,
+    render: (title: string) => `${title}`,
     ellipsis: true,
   },
   {
@@ -95,18 +98,14 @@ const columns = [
   },
 ];
 
-
-
-
 const getRandomuserParams = (params: TableParams) => ({
   limit: params.pagination?.pageSize,
   offset: params.pagination?.current,
   // ...params,
 });
 
-
 const TableList: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [data, setData] = useState<DataType[]>();
   const [loading, setLoading] = useState(false);
@@ -120,29 +119,32 @@ const TableList: React.FC = () => {
     setLoading(true);
     getArticlePage({
       ...getRandomuserParams(tableParams),
-    })
-      .then(({ data: { rows, count } }) => {
-        setData(rows);
-        setLoading(false);
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: count,
-          },
-        });
+    }).then(({ data: { rows, count } }) => {
+      setData(rows);
+      setLoading(false);
+      setTableParams({
+        ...tableParams,
+        pagination: {
+          ...tableParams.pagination,
+          total: count,
+        },
       });
+    });
   };
 
   const createArticleHandle = () => {
-    navigate('/home/article/upsert')
-  }
+    navigate('/home/article/upsert');
+  };
 
   useEffect(() => {
     fetchData();
   }, [tableParams.pagination?.current, tableParams.pagination?.pageSize]);
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps['onChange'] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
     setTableParams({
       pagination,
       filters,
@@ -155,12 +157,13 @@ const TableList: React.FC = () => {
     }
   };
 
-
   return (
     <>
-      <div style={{
-        marginBottom: 12
-        }}>
+      <div
+        style={{
+          marginBottom: 12,
+        }}
+      >
         <Button type="primary" onClick={createArticleHandle}>
           添加文章
         </Button>
@@ -177,10 +180,10 @@ const TableList: React.FC = () => {
         onChange={handleTableChange}
         scroll={{ y: 600 }}
         style={{
-          flex: 1
+          flex: 1,
         }}
       />
     </>
-  )
-}
+  );
+};
 export default TableList;
