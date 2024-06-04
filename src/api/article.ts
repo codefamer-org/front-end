@@ -11,3 +11,7 @@ export function saveArticle(data: object) {
 export function updateArticle(data: object) {
   return request.put('/article', data, {});
 }
+
+export function deleteArticle(data: any) {
+  return request.delete(`/article/${data.id}`, data, {});
+}

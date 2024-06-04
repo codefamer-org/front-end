@@ -30,11 +30,11 @@ class RequestHttp {
      */
     this.service.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        console.log(config)
+        // console.log(config)
 
         // 打开全局 loading
-        // 如不需要全局 loading，则第三个参数  { headers: { noLoading: true } }
-        if(!config.headers.noLoading) {
+        // 如不需要全局 loading，则第三个参数  { headers: { showLoading: true } }
+        if(config.headers.showLoading) {
           fullLoading.show();
         }
 

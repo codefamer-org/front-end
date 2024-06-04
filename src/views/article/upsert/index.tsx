@@ -3,11 +3,14 @@ import { MdEditor } from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
 import { Flex, Input, Typography, Button, message, Col, Row } from 'antd';
 import { saveArticle } from '@/api/article';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { delay } from '@/utils';
 
 const ArticlePage: React.FC = () => {
   const navigate = useNavigate()
+  const location  = useLocation()
+  console.log('ASDSADASD', location);
+  
   const [loading, setLoading] = useState(false);
   const [flag, setFlag] = useState(false);
   const [markdown, setMarkdown] = useState('');
@@ -22,12 +25,15 @@ const ArticlePage: React.FC = () => {
   }
   const queryHandler = async () => {
     setLoading(true);
-    await saveArticle({ markdown, title, desc, html });
-    message.success('操作成功');
-    delay(500);
-    setLoading(false);
-    resetHandler();
-    navigate('/home/article/list', { replace: true });
+    try {
+      await saveArticle({ markdown, title, desc, html });
+      message.success('操作成功');
+      delay(500);
+      resetHandler();
+      navigate('/home/article/list', { replace: true });
+    } finally {
+      setLoading(false);
+    }
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setSanitize = (htmlStr: any) => {
@@ -66,7 +72,7 @@ const ArticlePage: React.FC = () => {
         </Col>
       </Row>
       <Flex gap={16} align="center" flex="flex" justify="flex-end" style={{ marginTop: 12 }}>
-        <Button type="primary" onClick={resetHandler} danger loading={loading}>重 置</Button>
+        <Button type="primary" onClick={resetHandler} danger loading={loading}>保 存</Button>
         <Button type="primary" onClick={queryHandler} loading={loading}>查 询</Button>
       </Flex>
     </div>
