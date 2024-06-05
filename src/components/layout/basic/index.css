@@ -31,8 +31,10 @@
   border-top: 1px solid rgba(5, 5, 5, 0.06);
 }
 .content-container {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: calc(100vh - 64px);
   background-color: #FFF;
   padding: 12px;
+  box-sizing: border-box;
 }

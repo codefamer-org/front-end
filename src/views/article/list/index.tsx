@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Space, Button } from 'antd';
 import type { GetProp, TableProps } from 'antd';
-import { getArticlePage } from '@/api/article';
+import { pageHandle } from '@/api/article';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from './useOptions';
 
@@ -52,7 +52,7 @@ const TableList: React.FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const { data } = await getArticlePage({ ...getRandomuserParams(tableParams)}) || {}
+      const { data } = await pageHandle({ ...getRandomuserParams(tableParams)}) || {}
       const { rows, count } = data || {};
       setData(rows);
       setLoading(false);

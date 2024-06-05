@@ -1,24 +1,23 @@
 import { useNavigate } from 'react-router-dom';
-import { Table, Space, Button, Flex, Popconfirm , message } from 'antd';
+import { Space, Popconfirm , message } from 'antd';
 import type { PopconfirmProps } from 'antd';
 import { useState } from 'react';
-import { deleteArticle } from '@/api/article';
-import { delay } from '@/utils';
+import { deleteHandle } from '@/api/article';
 
-
-export function useOptions({ refresh }: { refresh: Function}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useOptions({ refresh }: { refresh: any}) {
   const [articleId, setArticleId] = useState('');
-  const [sourceType, setSourceType] = useState('');
   const navigate = useNavigate();
-  
+
   const toUpsert = (id: string, sourceType: string) => {
-    console.log('11111111111', articleId,sourceType );
-    
-    navigate('/home/article/upsert', { state: { id, sourceType } });
+    navigate(`/home/article/upsert?id=${id}&sourceType=${sourceType}`, { state: { id, sourceType } });
+  }
+  const toDetail = (id: string) => {
+    navigate(`/home/article/detail?id=${id}`);
   }
   const confirm: PopconfirmProps['onConfirm'] = async (e) => {
     console.log(e);
-    await deleteArticle({ id: articleId})
+    await deleteHandle({ id: articleId})
     message.success('删除成功');
     if (typeof refresh === 'function') {
       refresh?.()
@@ -90,11 +89,9 @@ export function useOptions({ refresh }: { refresh: Function}) {
       width: 140,
       render: (_: string, record: { [prop:string]: string }) => {
         return (
-          <Space gap={12}>
-            <a onClick={() => {
-              setArticleId(record.id, [toUpsert])
-            }}>编 辑</a>
-            <a onClick={() => toUpsert(record.id, 'DETAIL')}>详 情</a>
+          <Space>
+            <a onClick={() => toUpsert(record.id, 'EDIT')}>编 辑</a>
+            <a onClick={() => toDetail(record.id)}>详 情</a>
             <Popconfirm
               title={null}
               description="确定删除?"
@@ -110,7 +107,6 @@ export function useOptions({ refresh }: { refresh: Function}) {
       },
     },
   ];
-
   return {
     columns
   }

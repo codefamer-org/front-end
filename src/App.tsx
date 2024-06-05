@@ -15,6 +15,7 @@ import Menu from '@/views/system/menu/index';
 // 文章管理
 import ArticleList from '@/views/article/list/index';
 import ArticleUpsert from '@/views/article/upsert/index';
+import ArticleDetail from '@/views/article/detail/index';
 
 import Test from '@/views/test/test.jsx';
 
@@ -46,6 +47,7 @@ function App() {
             <Route path="/home/test" element={<Test />} />
             <Route path="/home/article/list" element={<ArticleList />} />
             <Route path="/home/article/upsert" element={<ArticleUpsert />} />
+            <Route path="/home/article/detail" element={<ArticleDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

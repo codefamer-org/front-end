@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { MdEditor } from 'md-editor-rt';
+import React, { useEffect, useState, useRef } from 'react';
+import { MdEditor, MdCatalog} from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
+import 'md-editor-rt/lib/preview.css';
 import { Flex, Input, Typography, Button, message, Col, Row } from 'antd';
-import { saveArticle } from '@/api/article';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { saveHandle, detailHandle } from '@/api/article';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { delay } from '@/utils';
+
 
 const ArticlePage: React.FC = () => {
   const navigate = useNavigate()
-  const location  = useLocation()
-  console.log('ASDSADASD', location);
-  
+  const [getSearchParams]  = useSearchParams()
   const [loading, setLoading] = useState(false);
   const [flag, setFlag] = useState(false);
   const [markdown, setMarkdown] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [html, setHtml] = useState('');
+  const mdEditorRefs = useRef();
+
   const resetHandler = () => {
     setMarkdown('');
     setTitle('');
@@ -26,7 +28,7 @@ const ArticlePage: React.FC = () => {
   const queryHandler = async () => {
     setLoading(true);
     try {
-      await saveArticle({ markdown, title, desc, html });
+      await saveHandle({ markdown, title, desc, html });
       message.success('操作成功');
       delay(500);
       resetHandler();
@@ -43,8 +45,29 @@ const ArticlePage: React.FC = () => {
     return htmlStr;
   }
 
+  const loadArticleDetail = async () => {
+    const id = getSearchParams.get('id')
+    if (id) {
+      const details = await detailHandle({ id });
+      setMarkdown(details?.data?.markdown || '');
+      setTitle(details?.data?.title || '');
+      setDesc(details?.data?.desc || '');
+      setHtml(details?.data?.html || '');
+    }
+  }
+  const scrollElement = document.documentElement;
+  const [id] = useState('preview-only');
+
   useEffect(() => {
     setFlag(true);
+    // const queryId = getSearchParams.get('id')
+    const sourceType = getSearchParams.get('sourceType')
+    if (sourceType === 'DETAIL') {
+      mdEditorRefs.current?.togglePreviewOnly(true);
+      mdEditorRefs.current?.toggleCatalog(true);
+      // mdEditorRefs.current?.toggleHtmlPreview(true);
+    }
+    loadArticleDetail();
   }, [])
 
   return (
@@ -56,7 +79,7 @@ const ArticlePage: React.FC = () => {
         </Col>
         <Col span={12}>
           <Typography.Title level={5}>文章简介</Typography.Title>
-          <Input.TextArea autoSize value={desc} showCount onChange={e => setDesc(e.target.value)} placeholder="请输入" />
+          <Input.TextArea autoSize value={desc} onChange={e => setDesc(e.target.value)} placeholder="请输入" />
           {/* <Input.TextArea
             showCount
             maxLength={100}
@@ -68,8 +91,19 @@ const ArticlePage: React.FC = () => {
         </Col>
         <Col span={24}>
           <Typography.Title level={5}>文章内容</Typography.Title>
-          <MdEditor modelValue={markdown} onChange={setMarkdown} sanitize={setSanitize} />
+          <MdEditor
+            readOnly={ getSearchParams.get('sourceType') === 'DETAIL' }
+            disabled={ getSearchParams.get('sourceType') === 'DETAIL' }
+            toolbars={ getSearchParams.get('sourceType') === 'DETAIL' ? [] : undefined }
+            ref={mdEditorRefs}
+            modelValue={markdown}
+            onChange={setMarkdown}
+            sanitize={setSanitize}
+          />
         </Col>
+        {/* <Col span={24}>
+          <MdEditor toolbars={[]} preview={false} htmlPreview modelValue={markdown} />
+        </Col> */}
       </Row>
       <Flex gap={16} align="center" flex="flex" justify="flex-end" style={{ marginTop: 12 }}>
         <Button type="primary" onClick={resetHandler} danger loading={loading}>保 存</Button>

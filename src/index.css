@@ -69,3 +69,8 @@ body {
     height: 0;
   }
 }
+
+/* markdown编辑器 */
+.article-preview-wrapper .md-editor-preview-wrapper {
+  padding: 0;
+}
