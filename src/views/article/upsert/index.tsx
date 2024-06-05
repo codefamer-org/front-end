@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MdEditor, MdCatalog} from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
 import 'md-editor-rt/lib/preview.css';
-import { Flex, Input, Typography, Button, message, Col, Row } from 'antd';
+import { Flex, Input, Typography, Button, message, Col, Row, FloatButton } from 'antd';
 import { saveHandle, detailHandle } from '@/api/article';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { delay } from '@/utils';
+import { SaveOutlined, RollbackOutlined } from '@ant-design/icons';
 
 
 const ArticlePage: React.FC = () => {
@@ -24,6 +25,7 @@ const ArticlePage: React.FC = () => {
     setTitle('');
     setDesc('');
     setHtml('');
+    navigate('/home/article/list', { replace: true });
   }
   const queryHandler = async () => {
     setLoading(true);
@@ -70,6 +72,38 @@ const ArticlePage: React.FC = () => {
     loadArticleDetail();
   }, [])
 
+
+  const onUploadImg = async (files, callback) => {
+    const res = await Promise.all(
+      files.map((file) => {
+        return new Promise((rev, rej) => {
+          const form = new FormData();
+          form.append('file', file);
+
+          axios
+            .post('/api/img/upload', form, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+            .then((res) => rev(res))
+            .catch((error) => rej(error));
+        });
+      })
+    );
+
+    // Approach 1
+    callback(res.map((item) => item.data.url));
+    // Approach 2
+    // callback(
+    //   res.map((item: any) => ({
+    //     url: item.data.url,
+    //     alt: 'alt',
+    //     title: 'title'
+    //   }))
+    // );
+  };
+
   return (
     <div style={{ height: '100%', width: '100%', marginBottom: 24, boxSizing: 'border-box' }}>
       <Row gutter={[16, 16]}>
@@ -99,16 +133,15 @@ const ArticlePage: React.FC = () => {
             modelValue={markdown}
             onChange={setMarkdown}
             sanitize={setSanitize}
+            onUploadImg={onUploadImg}
           />
         </Col>
-        {/* <Col span={24}>
-          <MdEditor toolbars={[]} preview={false} htmlPreview modelValue={markdown} />
-        </Col> */}
       </Row>
-      <Flex gap={16} align="center" flex="flex" justify="flex-end" style={{ marginTop: 12 }}>
-        <Button type="primary" onClick={resetHandler} danger loading={loading}>保 存</Button>
-        <Button type="primary" onClick={queryHandler} loading={loading}>查 询</Button>
-      </Flex>
+      <FloatButton.Group shape="circle" style={{ right: 24 }}>
+        <FloatButton icon={<SaveOutlined />} onClick={queryHandler} />
+        <FloatButton onClick={resetHandler} icon={<RollbackOutlined />} />
+        <FloatButton.BackTop visibilityHeight={0} />
+      </FloatButton.Group>
     </div>
   )
 }
