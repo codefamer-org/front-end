@@ -6,6 +6,7 @@ import { detailHandle } from '@/api/article';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { delay } from '@/utils';
+import type { ExposeParam } from 'md-editor-rt';
 
 const ArticleDetailPage: React.FC = () => {
   const navigate = useNavigate()
@@ -14,14 +15,14 @@ const ArticleDetailPage: React.FC = () => {
   const [markdown, setMarkdown] = useState('');
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
-  const mdEditorRefs = useRef();
+  const mdEditorRefs = useRef<ExposeParam>();
 
   const backHandler = () => {
     navigate('/home/article/list', { replace: true });
   }
 
   const loadArticleDetail = async () => {
-    const id = getSearchParams.get('id')
+    const id = getSearchParams.get('id') as unknown as number
     if (id && !loading) {
       try {
         setLoading(true)

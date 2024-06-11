@@ -1,33 +1,30 @@
 import { useNavigate } from 'react-router-dom';
 import { Space, Popconfirm , message } from 'antd';
-import type { PopconfirmProps } from 'antd';
+import type { PopconfirmProps, TableProps } from 'antd';
 import { useState } from 'react';
 import { deleteHandle } from '@/api/article';
+import { TRecords } from '@/api/types/article.types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useOptions({ refresh }: { refresh: any}) {
-  const [articleId, setArticleId] = useState('');
+  const [articleId, setArticleId] = useState(-1);
   const navigate = useNavigate();
 
-  const toUpsert = (id: string, sourceType: string) => {
-    navigate(`/home/article/upsert?id=${id}&sourceType=${sourceType}`, { state: { id, sourceType } });
+  const toUpsert = (id: number) => {
+    navigate(`/home/article/upsert?id=${id}`);
   }
-  const toDetail = (id: string) => {
+  const toDetail = (id: number) => {
     navigate(`/home/article/detail?id=${id}`);
   }
-  const confirm: PopconfirmProps['onConfirm'] = async (e) => {
-    console.log(e);
+  const confirm: PopconfirmProps['onConfirm'] = async () => {
     await deleteHandle({ id: articleId})
     message.success('删除成功');
     if (typeof refresh === 'function') {
       refresh?.()
     }
   };
-  const cancel: PopconfirmProps['onCancel'] = (e) => {
-    console.log(e);
-  };
 
-  const columns = [
+  const columns: TableProps['columns'] = [
     {
       title: '标题',
       dataIndex: 'title',
@@ -87,16 +84,15 @@ export function useOptions({ refresh }: { refresh: any}) {
       key: 'action',
       fixed: 'right',
       width: 140,
-      render: (_: string, record: { [prop:string]: string }) => {
+      render: (_: string, record: TRecords) => {
         return (
           <Space>
-            <a onClick={() => toUpsert(record.id, 'EDIT')}>编 辑</a>
+            <a onClick={() => toUpsert(record.id)}>编 辑</a>
             <a onClick={() => toDetail(record.id)}>详 情</a>
             <Popconfirm
               title={null}
               description="确定删除?"
               onConfirm={confirm}
-              onCancel={cancel}
               okText="确定"
               cancelText="取消"
             >

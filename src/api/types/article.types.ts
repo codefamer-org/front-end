@@ -1,5 +1,5 @@
 export type TParams = {
-  id: string
+  id: number
 }
 
 export type TRecords = {
@@ -13,4 +13,9 @@ export type TRecords = {
   update_user: string,
   created_at: string,
   updated_at: string,
+}
+
+export type TPageParams = {
+  page?: number,
+  size?: number,
 }

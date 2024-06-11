@@ -19,6 +19,8 @@ export interface ResponseResult {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ResultData<T = any> extends ResponseResult {
   // 数据
-  data: T;
+  data: T & {
+    count: number,
+    rows: T[]
+  };
 }
-

@@ -1,94 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Space, Button } from 'antd';
-import type { GetProp, TableProps } from 'antd';
+import { Table, Button } from 'antd';
+import type { TableProps } from 'antd';
 import { pageHandle } from '@/api/article';
 import { useNavigate } from 'react-router-dom';
 import { useOptions } from './useOptions';
-
-// type ColumnsType<T> = TableProps<T>['columns'];
-type TablePaginationConfig = Exclude<
-  GetProp<TableProps, 'pagination'>,
-  boolean
->;
-
-interface DataType {
-  [prop: string]: string;
-  // name: {
-  //   first: string;
-  //   last: string;
-  // };
-  // gender: string;
-  // email: string;
-  // login: {
-  //   uuid: string;
-  // };
-}
+import { TRecords } from '@/api/types/article.types'
 
 interface TableParams {
-  pagination?: TablePaginationConfig;
-  sortField?: string;
-  sortOrder?: string;
-  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
+  pagination?: {
+    page: number,
+    size: number,
+  };
+  total?: number
 }
-
-
 const getRandomuserParams = (params: TableParams) => ({
-  limit: params.pagination?.pageSize,
-  offset: params.pagination?.current,
-  // ...params,
+  page: params?.pagination?.page,
+  size: params?.pagination?.size,
 });
 
 const TableList: React.FC = () => {
   const navigate = useNavigate();
-
-  const [data, setData] = useState<DataType[]>();
+  const [data, setData] = useState<TRecords[]>();
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
-      current: 1,
-      pageSize: 50,
+      page: 1,
+      size: 50,
     },
+    total: 0
   });
   const fetchData = async () => {
     setLoading(true);
     try {
-      const { data } = await pageHandle({ ...getRandomuserParams(tableParams)}) || {}
-      const { rows, count } = data || {};
-      setData(rows);
-      setLoading(false);
-      setTableParams({
-        ...tableParams,
-        pagination: {
-          ...tableParams.pagination,
-          total: count,
-        },
-      });
+      const res = await pageHandle({ ...getRandomuserParams(tableParams)});
+      const total = res.data.count;
+      const result = res.data.rows;
+      setData(result);
+      setTableParams({ total });
     } finally {
+      setLoading(false);
     }
   };
-
   const createArticleHandle = () => {
     navigate('/home/article/upsert');
   };
   const { columns } = useOptions({ refresh: fetchData })
 
   useEffect(() => {
-    fetchData();
-  }, [tableParams.pagination?.current, tableParams.pagination?.pageSize]);
+    console.log('tableParams?.pagination', tableParams?.pagination);
+    if (tableParams?.pagination) {
+      fetchData();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableParams?.pagination?.page, tableParams?.pagination?.size]);
 
   const handleTableChange: TableProps['onChange'] = (
     pagination,
-    filters,
-    sorter
   ) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
+    console.log('pagination', pagination);
 
+    setTableParams({
+      pagination: {
+        page: pagination?.current as unknown as number,
+        size: pagination?.pageSize as unknown as number,
+      },
+    });
     // `dataSource` is useless since `pageSize` changed
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+    if (pagination.pageSize !== tableParams.pagination?.size) {
       setData([]);
     }
   };
@@ -112,7 +90,7 @@ const TableList: React.FC = () => {
         dataSource={data}
         loading={loading}
         columns={columns}
-        rowKey={(record: DataType) => record.id}
+        rowKey={(record) => record.id}
         pagination={false}
         onChange={handleTableChange}
         scroll={{ y: 600 }}

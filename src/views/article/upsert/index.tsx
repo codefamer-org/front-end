@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { MdEditor, MdCatalog} from 'md-editor-rt';
+import { MdEditor } from 'md-editor-rt';
+import type { ExposeParam } from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
 import 'md-editor-rt/lib/preview.css';
-import { Flex, Input, Typography, Button, message, Col, Row, FloatButton } from 'antd';
+import { Input, Typography,message, Col, Row, FloatButton, Spin } from 'antd';
 import { saveHandle, detailHandle } from '@/api/article';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { delay } from '@/utils';
 import { SaveOutlined, RollbackOutlined } from '@ant-design/icons';
+import { originUpload } from '@/utils/qiniu.js';
 
 
 const ArticlePage: React.FC = () => {
@@ -18,7 +20,7 @@ const ArticlePage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [html, setHtml] = useState('');
-  const mdEditorRefs = useRef();
+  const mdEditorRefs = useRef<ExposeParam>();
 
   const resetHandler = () => {
     setMarkdown('');
@@ -48,7 +50,7 @@ const ArticlePage: React.FC = () => {
   }
 
   const loadArticleDetail = async () => {
-    const id = getSearchParams.get('id')
+    const id = getSearchParams.get('id') as unknown as number
     if (id) {
       const details = await detailHandle({ id });
       setMarkdown(details?.data?.markdown || '');
@@ -57,55 +59,31 @@ const ArticlePage: React.FC = () => {
       setHtml(details?.data?.html || '');
     }
   }
-  const scrollElement = document.documentElement;
-  const [id] = useState('preview-only');
 
   useEffect(() => {
     setFlag(true);
-    // const queryId = getSearchParams.get('id')
-    const sourceType = getSearchParams.get('sourceType')
-    if (sourceType === 'DETAIL') {
-      mdEditorRefs.current?.togglePreviewOnly(true);
-      mdEditorRefs.current?.toggleCatalog(true);
-      // mdEditorRefs.current?.toggleHtmlPreview(true);
-    }
     loadArticleDetail();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-
-  const onUploadImg = async (files, callback) => {
+  type TRecordItem = { alt: string, title: string, url: string }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onUploadImg = async (files: File[], callback: (p: any) => void) => {
     const res = await Promise.all(
-      files.map((file) => {
+      files.map((file): Promise<TRecordItem> => {
         return new Promise((rev, rej) => {
-          const form = new FormData();
-          form.append('file', file);
-
-          axios
-            .post('/api/img/upload', form, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
-            .then((res) => rev(res))
-            .catch((error) => rej(error));
+          originUpload(file)
+          .then((res: TRecordItem) => rev(res))
+          .catch((error: PromiseRejectedResult) => rej(error));
         });
       })
     );
-
-    // Approach 1
-    callback(res.map((item) => item.data.url));
-    // Approach 2
-    // callback(
-    //   res.map((item: any) => ({
-    //     url: item.data.url,
-    //     alt: 'alt',
-    //     title: 'title'
-    //   }))
-    // );
+    callback(res?.filter((item) => item?.url));
   };
 
   return (
     <div style={{ height: '100%', width: '100%', marginBottom: 24, boxSizing: 'border-box' }}>
+      <Spin spinning={loading}></Spin>
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Typography.Title level={5}>文章标题</Typography.Title>
@@ -113,15 +91,7 @@ const ArticlePage: React.FC = () => {
         </Col>
         <Col span={12}>
           <Typography.Title level={5}>文章简介</Typography.Title>
-          <Input.TextArea autoSize value={desc} onChange={e => setDesc(e.target.value)} placeholder="请输入" />
-          {/* <Input.TextArea
-            showCount
-            maxLength={100}
-            value={desc}
-            onChange={e => setDesc(e.target.value)}
-            placeholder='请输入'
-            style={{ height: 120, resize: 'none' }}
-          /> */}
+          <Input.TextArea autoSize maxLength={500} value={desc} onChange={e => setDesc(e.target.value)} placeholder="请输入" />
         </Col>
         <Col span={24}>
           <Typography.Title level={5}>文章内容</Typography.Title>
