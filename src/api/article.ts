@@ -47,3 +47,12 @@ export function deleteHandle(data: TParams) {
 export function detailHandle(data: TParams) {
   return request.get<TRecords>(`/article/${data.id}`);
 }
+
+/**
+ * 获取所有
+ * @param data
+ * @returns
+ */
+export function allHandle(data: {}) {
+  return request.post<TRecords>(`/article/getAll`, data);
+}

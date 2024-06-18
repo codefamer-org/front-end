@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import BasicLayout from './components/layout/basic/index';
 import Login from './views/login/index';
+import Home from './views/home/index';
+
 
 // 战鼓管理
 import User from '@/views/system/user/index';
@@ -40,6 +42,7 @@ function App() {
     >
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route element={<BasicLayout />}>
             <Route path="/home/system/user" element={<User />} />
