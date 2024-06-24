@@ -5,6 +5,7 @@
   align-items: center;
   overflow: hidden;
   justify-content: center;
+  position: relative;
 }
 .home-container .content {
   max-width: 960px;
