@@ -22,9 +22,9 @@ export default defineConfig({
     // host: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:7001', // 后端服务实际地址
+        target: 'http://127.0.0.1:8080', // 后端服务实际地址
         changeOrigin: true, // 开启代理
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // rewrite: (path) => path.replace(/^\/api/, ''),
       },
     }
   }

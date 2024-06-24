@@ -7,5 +7,5 @@ import { request } from '../utils/http/request'
  * @returns
  */
 export function getQiNiuToken(data: any) {
-  return request.post(`/common/getQiNiuToken`, data);
+  return request.post(`/api/common/getQiNiuToken`, data);
 }

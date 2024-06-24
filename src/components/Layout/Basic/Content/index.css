@@ -5,22 +5,17 @@
   background-color: #FFF;
 }
 .header-container {
-  text-align: center;
-  height: 64px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   position: sticky;
   left: 0;
   top: 0;
   z-index: 1000;
   width: 100vw;
-  background-color: #FFF;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background-color: transparent;
 }
 .sidebar-container {
   overflow: auto;
-  height: calc(100vh - 64px);
+  height: calc(100vh - var(--icode-header));
   background-color: #FFF;
 }
 .sidebar-container .ant-menu {
@@ -33,7 +28,7 @@
 .content-container {
   overflow-y: auto;
   overflow-x: hidden;
-  height: calc(100vh - 64px);
+  height: calc(100vh - var(--icode-header));
   background-color: #FFF;
   padding: 12px;
   box-sizing: border-box;

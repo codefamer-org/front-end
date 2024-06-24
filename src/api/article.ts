@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { request } from '../utils/http/request'
 import { TParams, TRecords, TPageParams } from './types/article.types'
-type TNewRecord = Pick<TRecords, 'markdown' | 'html' | 'desc' | 'title'>
+type TNewRecord = Pick<TRecords, 'markdown' | 'html' | 'desc' | 'title' | 'category'>
 
 /**
  * 分页查询
@@ -9,7 +9,7 @@ type TNewRecord = Pick<TRecords, 'markdown' | 'html' | 'desc' | 'title'>
  * @returns
  */
 export function pageHandle(data: TRecords | TPageParams) {
-  return request.get<TRecords>(`/article`, data);
+  return request.get<TRecords>(`/api/article`, data);
 }
 
 /**
@@ -18,7 +18,7 @@ export function pageHandle(data: TRecords | TPageParams) {
  * @returns
  */
 export function saveHandle(data: TNewRecord) {
-  return request.post<TRecords>('/article', data);
+  return request.post<TRecords>('/api/article', data);
 }
 
 /**
@@ -27,7 +27,7 @@ export function saveHandle(data: TNewRecord) {
  * @returns
  */
 export function updateHandle(data: TParams | TRecords) {
-  return request.put<TRecords>(`/article/${data.id}`, data);
+  return request.put<TRecords>(`/api/article/${data.id}`, data);
 }
 
 /**
@@ -36,7 +36,7 @@ export function updateHandle(data: TParams | TRecords) {
  * @returns
  */
 export function deleteHandle(data: TParams) {
-  return request.delete(`/article/${data.id}`);
+  return request.delete(`/api/article/${data.id}`);
 }
 
 /**
@@ -45,7 +45,7 @@ export function deleteHandle(data: TParams) {
  * @returns
  */
 export function detailHandle(data: TParams) {
-  return request.get<TRecords>(`/article/${data.id}`);
+  return request.get<TRecords>(`/api/article/${data.id}`);
 }
 
 /**
@@ -54,5 +54,5 @@ export function detailHandle(data: TParams) {
  * @returns
  */
 export function allHandle(data: {}) {
-  return request.post<TRecords>(`/article/getAll`, data);
+  return request.post<TRecords>(`/api/article/getAll`, data);
 }

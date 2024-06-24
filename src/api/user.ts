@@ -1,9 +1,9 @@
 import { request } from '../utils/http/request'
 
 export function doLogin(data: object) {
-  return request.post('/sso/login', data, {});
+  return request.post('/api/sso/login', data, {});
 }
 
 export function getUserPage(data: object) {
-  return request.get('/user', data, {});
+  return request.get('/api/user', data, {});
 }

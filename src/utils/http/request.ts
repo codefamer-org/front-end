@@ -11,7 +11,7 @@ import { AxiosCancel } from "./AxiosCancel";
 import { LocalStorageService } from '@/utils/storage';
 
 const config = {
-  baseURL: "http://localhost:7001/api/",
+  // baseURL: "http://localhost:7001/api/",
   timeout: 5000,
   withCredentials: true,
   headers: {},

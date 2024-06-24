@@ -1,79 +1,79 @@
 import './index.less';
 import React, { useEffect, useState } from 'react';
-import { Flex, Tag, Divider, Card } from 'antd';
+import { Card } from 'antd';
 import { allHandle } from '@/api/article';
 import { TRecords } from '@/api/types/article.types';
+import SelectCategory from '@/components/SelectCategory/index.tsx';
+import CustomEmpty from '@/components/CustomEmpty/index.tsx';
+import { delay } from '@/utils';
+import { useNavigate } from 'react-router-dom';
+import Header from '@/components/Layout/Basic/Header/index';
+import Footer from '@/components/Layout/Basic/Footer/index';
 
 const HomePage: React.FC = () => {
-  const tagsData = ['Movies', 'Books', 'Music', 'Sports'];
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<TRecords[]>();
-  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
-  const handleChange = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked
-      ? [...selectedTags, tag]
-      : selectedTags.filter((t) => t !== tag);
-    console.log('You are interested in: ', nextSelectedTags);
-    setSelectedTags(nextSelectedTags);
+  const [params, setParams] = useState({ category: '' });
+  const navigate = useNavigate();
+  const toDetail = (id: number) => {
+    navigate(`/article/detail?id=${id}&type=preview`);
   };
-
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await allHandle({});
-      const result = res.data.rows;
+      const res = await allHandle({ ...params });
+      const result = res?.data?.rows || [];
       setData(result);
     } finally {
+      await delay(100);
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
+  useEffect(() => {
+    fetchData();
+  }, [params]);
   return (
     <div className="home-container">
-      <div className="header"></div>
+      <Header />
       <div className="content">
         <Card
           title="文章"
           bordered={true}
           className="content-card"
           style={{ width: '100%' }}
+          loading={loading}
+          extra={
+            <SelectCategory
+              variant="filled"
+              value={params.category}
+              onChange={(val) =>
+                setParams({ category: val && val?.length ? val : '' })
+              }
+            />
+          }
         >
-          <Divider orientation="left">文章类型</Divider>
-          <Flex gap={8} wrap>
-            <Tag.CheckableTag key="ALL" checked={Boolean(selectedTags?.length)}>
-              所有
-            </Tag.CheckableTag>
-            {tagsData.map<React.ReactNode>((tag) => (
-              <Tag.CheckableTag
-                key={tag}
-                checked={selectedTags.includes(tag)}
-                onChange={(checked) => handleChange(tag, checked)}
-              >
-                {tag}
-              </Tag.CheckableTag>
-            ))}
-          </Flex>
-          <Divider orientation="left">文章列表</Divider>
-          <div className="articles">
-            {data?.map((item: TRecords) => (
-              <>
-                <div className="article-item">
-                  <div>{item.title}</div>
-                  {/* <div>{item.desc}</div> */}
+          {data?.length === 0 && !loading ? (
+            <CustomEmpty onClick={fetchData} />
+          ) : null}
+          {data?.length ? (
+            <div className="content-card-inner">
+              {data?.map((item: TRecords) => (
+                <div
+                  className="card"
+                  onClick={() => toDetail(item.id)}
+                  key={item.id}
+                >
+                  <div className="title">{item.title}</div>
                 </div>
-                <Divider />
-              </>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : null}
         </Card>
       </div>
-      <div className="footer">
-        <a href="https://beian.miit.gov.cn/">蜀 ICP 20240618</a>
-      </div>
+      <Footer />
     </div>
   );
 };

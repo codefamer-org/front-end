@@ -9,6 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { delay } from '@/utils';
 import { SaveOutlined, RollbackOutlined } from '@ant-design/icons';
 import { originUpload } from '@/utils/qiniu.js';
+import SelectCategory from '@/components/SelectCategory/index.tsx';
 
 
 const ArticlePage: React.FC = () => {
@@ -20,6 +21,7 @@ const ArticlePage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [html, setHtml] = useState('');
+  const [category, setCategory] = useState('');
   const mdEditorRefs = useRef<ExposeParam>();
 
   const resetHandler = () => {
@@ -32,7 +34,7 @@ const ArticlePage: React.FC = () => {
   const queryHandler = async () => {
     setLoading(true);
     try {
-      await saveHandle({ markdown, title, desc, html });
+      await saveHandle({ markdown, title, desc, html, category });
       message.success('操作成功');
       delay(500);
       resetHandler();
@@ -57,6 +59,7 @@ const ArticlePage: React.FC = () => {
       setTitle(details?.data?.title || '');
       setDesc(details?.data?.desc || '');
       setHtml(details?.data?.html || '');
+      setCategory(details?.data?.category || '');
     }
   }
 
@@ -66,7 +69,7 @@ const ArticlePage: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  type TRecordItem = { alt: string, title: string, url: string }
+  type TRecordItem = { alt: string, title: string, url: string, category: string }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onUploadImg = async (files: File[], callback: (p: any) => void) => {
     const res = await Promise.all(
@@ -92,6 +95,14 @@ const ArticlePage: React.FC = () => {
         <Col span={12}>
           <Typography.Title level={5}>文章简介</Typography.Title>
           <Input.TextArea autoSize maxLength={500} value={desc} onChange={e => setDesc(e.target.value)} placeholder="请输入" />
+        </Col>
+        <Col span={12}>
+          <Typography.Title level={5}>文章类别</Typography.Title>
+          <SelectCategory
+              mode={undefined}
+              value={category}
+              onChange={setCategory}
+            />
         </Col>
         <Col span={24}>
           <Typography.Title level={5}>文章内容</Typography.Title>

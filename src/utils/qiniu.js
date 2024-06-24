@@ -32,7 +32,8 @@ export async function originUpload(file, compress = true){
       },
       (results) => {
         console.log('complete', results);
-        rev({ url: `${import.meta.env.VITE_QINIU_URL}/${results.key}`, alt: null, title: file.name })
+        // rev({ url: `${import.meta.env.VITE_QINIU_URL}/${results.key}`?.trim(), alt: null, title: file?.name?.trim() })
+        rev({ url: `${import.meta.env.VITE_QINIU_URL}/${results.key}`?.trim(), alt: null, title: null })
       })
       console.log('subscription', subscription);
     } else {

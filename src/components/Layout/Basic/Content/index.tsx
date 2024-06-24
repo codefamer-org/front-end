@@ -4,9 +4,13 @@ import { Layout, Menu } from 'antd';
 import type { MenuProps } from 'antd';
 import { Outlet, useNavigate } from "react-router-dom";
 import { MailOutlined } from '@ant-design/icons';
-import SpinLoading from '@/components/spin';
+import SpinLoading from '@/components/Spin';
 
-const { Header, Sider, Content, } = Layout;
+import BasicHeader from '@/components/Layout/Basic/Header/index';
+import BasicFooter from '@/components/Layout/Basic/Footer/index';
+
+
+const { Header, Sider, Content, Footer } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 type ClickType = MenuProps['onClick'];
@@ -88,8 +92,7 @@ const BasicLayout: React.FC = () => {
   return (
     <Layout className='layout-container'>
       <Header className='header-container'>
-        <div>LOGO</div>
-        <Menu onClick={onClickTop} selectedKeys={[current]} mode="horizontal" items={topMenus} />
+        <BasicHeader />
       </Header>
       <Layout>
         <Sider theme="light" className='sidebar-container' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
@@ -102,6 +105,9 @@ const BasicLayout: React.FC = () => {
           </Suspense>
         </Content>
       </Layout>
+      <Footer>
+        <BasicFooter />
+      </Footer>
     </Layout>
   )
 };

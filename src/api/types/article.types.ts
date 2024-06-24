@@ -8,6 +8,7 @@ export type TRecords = {
   desc: string,
   title: string,
   html: string,
+  category?: string,
   markdown: string,
   create_user: string,
   update_user: string,
