@@ -58,7 +58,7 @@ const ArticleDetail: React.FC = () => {
   return (
     <div className="home-container">
       <Header />
-      <div className="content">
+      <div className="content detail">
           <Typography.Title level={3}>{ title }</Typography.Title>
           <Typography.Title level={5}>{ desc }</Typography.Title>
           <MdPreview ref={mdEditorRefs} modelValue={markdown} className='article-preview-wrapper' />

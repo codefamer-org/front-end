@@ -8,10 +8,15 @@
   position: relative;
   .content {
     max-width: 960px;
-    width: 100%;
+    width: calc(100% - 24px);
     flex: 1;
     overflow: auto;
-    padding: 12px;
     box-sizing: border-box;
+    background-color: #fff;
+    margin-top: 12px;
+    border-radius: 12px;
+  }
+  .detail {
+    padding: 12px;
   }
 }

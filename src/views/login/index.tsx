@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
   }
   return (
     <div style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
-      <Form  onFinish={onFinish} onFinishFailed={onFinishFailed} scrollToFirstError style={{ width: 300 }} initialValues={initialValues}>
+      <Form  onFinish={onFinish} onFinishFailed={onFinishFailed} scrollToFirstError style={{ width: 300, padding: 24, borderRadius: 12, backgroundColor: '#FFF'}} initialValues={initialValues}>
         <Title level={3} style={{ textAlign: 'center', marginBottom: 20 }}>登录</Title>
         <Form.Item name="name" rules={[{ required: true, message: '请输入账户名称' }]}>
           <Input

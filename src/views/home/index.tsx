@@ -41,7 +41,7 @@ const HomePage: React.FC = () => {
       <div className="content">
         <Card
           title="文章"
-          bordered={true}
+          bordered={false}
           className="content-card"
           style={{ width: '100%' }}
           loading={loading}
@@ -49,6 +49,7 @@ const HomePage: React.FC = () => {
             <SelectCategory
               variant="filled"
               value={params.category}
+              mode="tags"
               onChange={(val) =>
                 setParams({ category: val && val?.length ? val : '' })
               }
