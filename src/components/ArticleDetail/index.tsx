@@ -3,7 +3,7 @@ import { MdPreview  } from 'md-editor-rt';
 import 'md-editor-rt/lib/preview.css';
 import { Typography, FloatButton, Spin } from 'antd';
 import { detailHandle } from '@/api/article';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { delay } from '@/utils';
 import type { ExposeParam } from 'md-editor-rt';
@@ -13,7 +13,7 @@ import './index.less'
 
 const ArticleDetail: React.FC = () => {
   const navigate = useNavigate()
-  const [getSearchParams]  = useSearchParams()
+  const params = useParams()
   const [loading, setLoading] = useState(false);
   const [markdown, setMarkdown] = useState('');
   const [title, setTitle] = useState('');
@@ -22,11 +22,9 @@ const ArticleDetail: React.FC = () => {
 
   const backHandler = () => {
     navigate(-1)
-    // navigate('/home/article/list', { replace: true });
   }
-
   const loadArticleDetail = async () => {
-    const id = getSearchParams.get('id') as unknown as number
+    const id = params?.id as unknown as number
     if (id && !loading) {
       try {
         setLoading(true)
@@ -57,7 +55,7 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <div className="home-container">
-      <Header />
+      <Header showSystem={false} />
       <div className="content detail">
           <Typography.Title level={3}>{ title }</Typography.Title>
           <Typography.Title level={5}>{ desc }</Typography.Title>

@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
   const [params, setParams] = useState({ category: '' });
   const navigate = useNavigate();
   const toDetail = (id: number) => {
-    navigate(`/article/detail?id=${id}&type=preview`);
+    navigate(`/article/detail/${id}`);
   };
   const fetchData = async () => {
     setLoading(true);
@@ -37,7 +37,7 @@ const HomePage: React.FC = () => {
   }, [params]);
   return (
     <div className="home-container">
-      <Header />
+      <Header showSystem={false} />
       <div className="content">
         <Card
           title="文章"
