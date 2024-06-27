@@ -1,4 +1,4 @@
-import './index.less';
+import  classes from './index.module.less';
 import React, { useEffect, useState } from 'react';
 import { Card } from 'antd';
 import { allHandle } from '@/api/article';
@@ -36,14 +36,13 @@ const HomePage: React.FC = () => {
     fetchData();
   }, [params]);
   return (
-    <div className="home-container">
+    <div className={classes.container}>
       <Header showSystem={false} />
-      <div className="content">
+      <div className={classes.content}>
         <Card
           title="文章"
           bordered={false}
-          className="content-card"
-          style={{ width: '100%' }}
+          className={classes.content_card_wrapper}
           loading={loading}
           extra={
             <SelectCategory
@@ -60,14 +59,14 @@ const HomePage: React.FC = () => {
             <CustomEmpty onClick={fetchData} />
           ) : null}
           {data?.length ? (
-            <div className="content-card-inner">
+            <div className={classes.content_inner}>
               {data?.map((item: TRecords) => (
                 <div
-                  className="card"
+                  className={classes.content_card}
                   onClick={() => toDetail(item.id)}
                   key={item.id}
                 >
-                  <div className="title">{item.title}</div>
+                  <div className={classes.content_card_title}>{item.title}</div>
                 </div>
               ))}
             </div>

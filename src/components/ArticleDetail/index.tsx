@@ -9,7 +9,8 @@ import { delay } from '@/utils';
 import type { ExposeParam } from 'md-editor-rt';
 import Header from '@/components/Layout/Basic/Header/index';
 import Footer from '@/components/Layout/Basic/Footer/index';
-import './index.less'
+// import './index.less'
+import  classes from './index.module.less';
 
 const ArticleDetail: React.FC = () => {
   const navigate = useNavigate()
@@ -54,11 +55,10 @@ const ArticleDetail: React.FC = () => {
   }
 
   return (
-    <div className="home-container">
+    <div className={classes.container}>
       <Header showSystem={false} />
-      <div className="content detail">
+      <div className={classes.content}>
           <Typography.Title level={3}>{ title }</Typography.Title>
-          <Typography.Title level={5}>{ desc }</Typography.Title>
           <MdPreview ref={mdEditorRefs} modelValue={markdown} className='article-preview-wrapper' />
           <FloatButton onClick={backHandler} icon={<ArrowLeftOutlined />} />
       </div>

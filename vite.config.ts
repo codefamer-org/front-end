@@ -9,7 +9,13 @@ export default defineConfig({
       less: {
         javascriptEnabled: true,
       }
-    }
+    },
+    modules: {
+      // 开启 camelCase 格式变量名转换
+      localsConvention: 'camelCase',
+      // 类名 前缀
+      generateScopedName: '[local]-[hash:base64:5]',
+    },
   },
   plugins: [react()],
   resolve: {
