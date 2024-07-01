@@ -11,10 +11,10 @@ export function useOptions({ refresh }: { refresh: any}) {
   const navigate = useNavigate();
 
   const toUpsert = (id: number) => {
-    navigate(`/home/article/upsert?id=${id}`);
+    navigate(`/home/article/upsert/${id}`);
   }
   const toDetail = (id: number) => {
-    navigate(`/home/article/detail?id=${id}`);
+    navigate(`/home/article/detail/${id}`);
   }
   const confirm: PopconfirmProps['onConfirm'] = async () => {
     await deleteHandle({ id: articleId})

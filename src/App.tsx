@@ -51,8 +51,8 @@ function App() {
             <Route path="/home/system/menu" element={<Menu />} />
             <Route path="/home/test" element={<Test />} />
             <Route path="/home/article/list" element={<ArticleList />} />
-            <Route path="/home/article/upsert" element={<ArticleUpsert />} />
-            <Route path="/home/article/detail" element={<ArticleDetailLayout />} />
+            <Route path="/home/article/upsert/:id" element={<ArticleUpsert />} />
+            <Route path="/home/article/detail/:id" element={<ArticleDetailLayout />} />
           </Route>
         </Routes>
       </BrowserRouter>

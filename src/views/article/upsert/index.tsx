@@ -4,8 +4,8 @@ import type { ExposeParam } from 'md-editor-rt';
 import 'md-editor-rt/lib/style.css';
 import 'md-editor-rt/lib/preview.css';
 import { Input, Typography,message, Col, Row, FloatButton, Spin } from 'antd';
-import { saveHandle, detailHandle } from '@/api/article';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { saveHandle, detailHandle, updateHandle } from '@/api/article';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { delay } from '@/utils';
 import { SaveOutlined, RollbackOutlined } from '@ant-design/icons';
 import { originUpload } from '@/utils/qiniu.js';
@@ -14,7 +14,7 @@ import SelectCategory from '@/components/SelectCategory/index.tsx';
 
 const ArticlePage: React.FC = () => {
   const navigate = useNavigate()
-  const [getSearchParams]  = useSearchParams()
+  const params  = useParams()
   const [loading, setLoading] = useState(false);
   const [flag, setFlag] = useState(false);
   const [markdown, setMarkdown] = useState('');
@@ -34,7 +34,9 @@ const ArticlePage: React.FC = () => {
   const queryHandler = async () => {
     setLoading(true);
     try {
-      await saveHandle({ markdown, title, desc, html, category });
+      const id = params.id as unknown as number
+      const apiFn = id ? updateHandle : saveHandle;
+      await apiFn({ id, markdown, title, desc, html, category });
       message.success('操作成功');
       delay(500);
       resetHandler();
@@ -52,7 +54,7 @@ const ArticlePage: React.FC = () => {
   }
 
   const loadArticleDetail = async () => {
-    const id = getSearchParams.get('id') as unknown as number
+    const id = params.id as unknown as number
     if (id) {
       const details = await detailHandle({ id });
       setMarkdown(details?.data?.markdown || '');
@@ -107,9 +109,9 @@ const ArticlePage: React.FC = () => {
         <Col span={24}>
           <Typography.Title level={5}>文章内容</Typography.Title>
           <MdEditor
-            readOnly={ getSearchParams.get('sourceType') === 'DETAIL' }
-            disabled={ getSearchParams.get('sourceType') === 'DETAIL' }
-            toolbars={ getSearchParams.get('sourceType') === 'DETAIL' ? [] : undefined }
+            readOnly={ false }
+            disabled={ false }
+            toolbars={ undefined }
             ref={mdEditorRefs}
             modelValue={markdown}
             onChange={setMarkdown}
